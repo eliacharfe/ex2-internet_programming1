@@ -1,105 +1,162 @@
 
+
 class Form
 {
-    constructor(title, description, highPriority) {
-        this.title = title;
-        this.description = description;
-        this.highPriority = highPriority;
+    constructor(myDiv) {
+        this.myDiv = myDiv;
+        document.getElementById("myDiv").appendChild(this.myDiv);
 
-      // this.push({label: '<input type="button" value="B"/>' });
+      //  toDoList.append(this.myDiv);
+     //   toDoList.appendChild(this.myDiv);
+        //toDoList.push(this.myDiv);
 
-    }
-
-    /*creatFormObject()*/
-
-    getOneForm(){
-        return this.title + '\n' + this.description + '\n';
+       toDoList.push( document.getElementById("myDiv").appendChild(this.myDiv));
     }
 
 }
+
 //--------------------------------------
 //--------------------------------------
 function addToList(form)
 {
-   /* let obj = form.title + '\n' + form.description + '\n';*/
-    formList.push(form.getOneForm());
+   toDoList.push(form);
+  //  toDoList.appendChild(form);
 }
 //-----------------------------------------
-function printForm()
-{
-    lst = []
-    for(let form of formList)
-    {
-        lst.push(form.getOneForm())
-        console.log(form.getOneForm());
-    }
-    return lst;
-}
 
-formList = []
+toDoList = []
 
-/*let form1 = new Form('Exercise 2', 'internet programming course', true);
-let form2 = new Form('Shopping', 'Buy milk', false);*/
 
-/*addToList(form1);
-addToList(form2);*/
-
-printForm()
 //-------------------------------------------------------
 /*document.getElementById("myBtn").onclick = function() {addButton()};*/
 function addButtonClicked() {
-    if ( typeof addButtonClicked.counter == 'undefined' ) {
-        addButtonClicked.counter = 0;
-    }
-
-    document.getElementById('incorrectInput').value = '';
     let inpTitle = document.getElementById("titleID");
     let inpDescription =  document.getElementById("descriptionID");
+    let checkBox = document.getElementById("checkbox");
+    let incorrectInput =  document.getElementById('incorrectInput');
+    incorrectInput.value = '';
 
     if (isEmpty(inpTitle) || !check(inpTitle)) {
-        error('please enter a non empty title with letters and digits only\n');
+        error('please enter a non empty title with letters and digits only\n', incorrectInput);
         inpTitle.value = '';
         return; }
     if (isEmpty(inpDescription)) {
-        error('please enter a non empty text description\n');
+        error('please enter a non empty text description\n', incorrectInput);
         inpDescription.value = '';
         return; }
 
-    /*let form = new Form(inpTitle.value, inpDescription.value, false);
-    addToList(form);*/
+    addToList(createCard(inpTitle.value, inpDescription.value, checkBox));
 
-    let outForm = document.getElementById('formOutput');
-    outForm.setAttribute("class", "card w-100  border border-5 rounded-3 d-block");
-/*     outForm.appendChild(document.getElementById('title').innerHTML = inpTitle.value );
-     outForm.appendChild(document.getElementById('desc').innerHTML = inpDescription.value);*/
+   // document.getElementById("myDiv").innerHTML = toDoList;
+    //document.getElementsByClassName("container-fluid").innerHTML = toDoList;
 
-     document.getElementById('title').innerHTML = inpTitle.value.trim();
-     document.getElementById('desc').innerHTML = inpDescription.value.trim();
-     document.getElementById("delete").setAttribute("class", "d-block btn btn-danger ");
-
-    createForm(inpTitle.value, inpDescription.value);
-
-   // document.getElementById("demo").innerHTML = formList;
-
-    document.getElementById('incorrectInput').setAttribute("class", "d-none");
-    inpTitle.value = '';
-    inpDescription.value = '';
+    incorrectInput.setAttribute("class", "d-none");
+    inpTitle.value = inpDescription.value = '';
 }
 //-----------------------------------------------
 function check(inp){
-    return inp.value.match(/[a-z]/i) || !isNaN(inp.value);
+    return inp.value.match(/^[0-9a-zA-Z\s]+$/)
+ //   return inp.value.match(/[a-z]/i) || !isNaN(inp.value);
 }
 //-------------------------------------
 function isEmpty(inp){
     return (inp.value.length == 0)
 }
 //----------------------------------------
-function error(str){
-    let incorrect =  document.getElementById('incorrectInput')
-    incorrect.innerHTML = str + "<br />";
-    incorrect.setAttribute("class", "alert alert-danger")
+function error(str, incorrectInp){
+    incorrectInp.innerHTML = str + "<br />";
+    incorrectInp.setAttribute("class", "alert alert-danger");
 }
 //------------------------------------
+//---------------------------
+function createCard(inpTitle, inpDescription, checkBox){
+
+    let myDiv = document.createElement('div');
+
+    let card = document.createElement('div');
+    (checkBox.checked) ? card.setAttribute("class", "card w-100  border border-5 rounded-3 alert alert-danger")
+        :  card.className = "card w-100  border border-5 rounded-3";
+    myDiv.appendChild(card);
+
+    let cardBody = document.createElement('div');
+    cardBody.className = "card-body";
+    card.appendChild(cardBody);
+
+    let title = document.createElement('h5');
+    title.innerText = inpTitle;
+    title.className = 'card-title';
+    cardBody.appendChild(title);
+
+    let description = document.createElement('p');
+    description.innerHTML = inpDescription;
+    description.className = "card-text";
+    cardBody.appendChild(description );
+
+    let btnDelete = document.createElement('button');
+    btnDelete.innerHTML = "Delete";
+    btnDelete.setAttribute("class","btn btn-danger");
+    cardBody.appendChild(btnDelete);
+
+    //document.getElementById("myDiv").appendChild(myDiv);
+    return  new Form(myDiv);
+}
+//--------------------------------
+function deleteBtnClicked(){
+
+}
+//-------------------------------
+function sort(){
+   // toDoList.forEach(element.title => );
+
+    let x = document.getElementById("myDiv");
+
+  /*  toDoList.sort(function (a, b) {
+        return a.localeCompare(b);
+    });*/
+
+/*    let result = [];
+    for (let i = 0; i < toDoList.length; i++) {
+        if (toDoList[i].title === false) {
+            result.push(toDoList[i]);
+        }
+    }
+    for (let i = 0; i < toDoList.length; i++) {
+        if (!toDoList[i].title === false) {
+            result.push(toDoList[i]);
+        }
+    }
+
+    x.innerHTML = result;*/
+
+  //  toDoList.sort((firstItem.title.value, secondItem.title.value) => firstItem.title.value - secondItem.grade.title.value);
+}
+
+//--------------------------
+function press(event) {
+    if (event.keyCode == 13 && !event.shiftKey) {
+
+        document.getElementById("myDiv").innerHTML += "<br>";
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();
+    });
+*/
+
+
 
 /*
 function createElement(inp){
@@ -111,71 +168,6 @@ function appendChildren(parent, childArray){
         parent.appendChild(child);
     });
 }
-*/
-
-
-//---------------------------
-function  createForm(inpTitle, inpDescription){
-
-    let createTaskCard = (task) => {
-
-        let card = document.createElement('div');
-        card.className = 'card w-100  border border-5 rounded-3';
-
-        let cardBody = document.createElement('div');
-        cardBody.className = "card-body";
-
-        let title = document.createElement('h5');
-        title.innerText = inpTitle;
-        title.className = 'card-title';
-
-        let Description = document.createElement('p');
-        Description.innerHTML = inpDescription;
-        Description.className = "card-text";
-
-        cardBody.appendChild(title);
-        cardBody.appendChild(Description);
-        card.appendChild(cardBody);
-
-        formList.appendChild(card);
-
-    }
-
-    let initListOfTasks = () => {
-        if (formList) {
-            document.getElementById('demo').replaceWith(formList);
-            return;
-        }
-
-        formList = document.getElementById('demo');
-        tasks.forEach((task) => {
-            createTaskCard(task);
-        });
-    };
-
-    initListOfTasks();
-}
-
-//-----------------------
-
-var tasks = [{
-    "title": "home",
-    "color": "blue",
-},
-    {
-        "title": "city",
-        "color": "green",
-    }
-];
-
-
-
-
-
-/*
-    $(document).ready(function(){
-        $('[data-toggle="popover"]').popover();
-    });
 */
 
 

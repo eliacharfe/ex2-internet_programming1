@@ -42,27 +42,24 @@
 
             <div class="text-center">
                 <button type="button" class="btn btn-outline-secondary">Show High Priority</button>
-                <button type="button" class="btn btn-outline-secondary">Sort</button>
+                <button type="button" class="btn btn-outline-secondary" onclick="sort()">Sort</button>
             </div>
 
             <form id="f" method="post" autocomplete="on">
                 <div class="form-group">
                     <label for="titleID">Title</label>
                     <input type="text" class="form-control" id="titleID" placeholder="type your to-do here">
-                    <div class="invalid-feedback">
-                        Please provide a valid city.
-                    </div>
                 </div>
                 <p></p>
                 <div class="form-group">
                     <label for="descriptionID">Description</label>
-                    <input type="text" class="form-control" id="descriptionID" placeholder="type your to-do here"
-                           style="height: 80px">
+                    <textarea type="input" class="form-control" id="descriptionID"
+                              placeholder="type your to-do here" style="height: 80px"></textarea>
                 </div>
 
                 <p></p>
                 <div class="checkbox">
-                    <label><input type="checkbox"> High Priority</label>
+                    <label><input type="checkbox" name="checkbox" id="checkbox"> High Priority</label>
                 </div>
                 <p></p>
 
@@ -73,33 +70,12 @@
             </button>
             <p></p>
 
-
             <p id="incorrectInput"></p>
 
-            <p id="demo"></p>
-
-            <!--<div class="textarea-container">
-            <textarea rows="4" cols="50" name="Description" id="formOutput" class="form-control"></textarea>
-                <button id="delete" class="btn btn-danger" >Delete</button>
-            </div>-->
-
-            <!--<div class="container border border-5 rounded-3 d-none" id="formOutput">
-               <h4 id="title"></h4>
-                <p id="desc"></p>
-            &lt;!&ndash;    <button id="delete" class="btn btn-danger" >Delete</button>&ndash;&gt;
-            </div>
--->
-            <div class="card w-100  border border-5 rounded-3 d-none" id="formOutput">
-                <div class="card-body">
-                    <h5 class="card-title" id="title"></h5>
-                    <p class="card-text" id="desc"></p>
-                    <button id="delete" class="btn btn-danger" >Delete</button>
-                </div>
-            </div>
+            <div id="myDiv"></div>
+            <!--class="container-fluid"-->
 
             <p><br><br>
-
-            <ul id="listElem"></ul>
 
 
         </div>
