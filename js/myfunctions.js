@@ -4,63 +4,67 @@ class Form
 {
     constructor(myDiv) {
         this.myDiv = myDiv;
-        document.getElementById("myDiv").appendChild(this.myDiv);
-
-      //  toDoList.append(this.myDiv);
-     //   toDoList.appendChild(this.myDiv);
-        //toDoList.push(this.myDiv);
-
-       toDoList.push( document.getElementById("myDiv").appendChild(this.myDiv));
+        toDoList.push(this.myDiv);
     }
 
 }
-
 //--------------------------------------
-//--------------------------------------
-function addToList(form)
-{
-   toDoList.push(form);
-  //  toDoList.appendChild(form);
-}
 //-----------------------------------------
 
 toDoList = []
 
-
 //-------------------------------------------------------
-/*document.getElementById("myBtn").onclick = function() {addButton()};*/
 function addButtonClicked() {
-    let inpTitle = document.getElementById("titleID");
-    let inpDescription =  document.getElementById("descriptionID");
-    let checkBox = document.getElementById("checkbox");
-    let incorrectInput =  document.getElementById('incorrectInput');
+    let inpTitle = getById("titleID");
+    let inpDescription =  getById("descriptionID");
+    let checkBox = getById("checkbox");
+    let incorrectInput =  getById('incorrectInput');
     incorrectInput.value = '';
 
-    if (isEmpty(inpTitle) || !check(inpTitle)) {
-        error('please enter a non empty title with letters and digits only\n', incorrectInput);
-        inpTitle.value = '';
-        return; }
-    if (isEmpty(inpDescription)) {
-        error('please enter a non empty text description\n', incorrectInput);
-        inpDescription.value = '';
-        return; }
+    if (!correctInput(inpTitle, inpDescription, incorrectInput))
+        return;
 
-    addToList(createCard(inpTitle.value, inpDescription.value, checkBox));
+    // if got here ==> correct inputs
+     new Form(createCard(inpTitle.value, inpDescription.value, checkBox));
+     displayForm();
 
-   // document.getElementById("myDiv").innerHTML = toDoList;
-    //document.getElementsByClassName("container-fluid").innerHTML = toDoList;
+   /*  for (let elem of toDoList) {
+         let x =  elem.children[0].children[0].children[0].children[0];
+        // let y = x.id;
+
+         for(let i = 0; i < x.length; i++) {
+             if (x[i].className == 'card-title') {
+                 document.getElementById('demo').innerHTML = x;
+             }
+        }
+        // document.getElementById('demo').innerHTML = x;
+     }*/
+    // document.getElementById('demo').innerHTML = toDoList[0].valueOf();
 
     incorrectInput.setAttribute("class", "d-none");
     inpTitle.value = inpDescription.value = '';
 }
+//--------------------------
+function correctInput(inpTitle, inpDescription, incorrectInput){
+    if (isEmpty(inpTitle) || !isLetterOrNumber(inpTitle)) {
+        error('please enter a non empty title with letters and digits only\n', incorrectInput);
+        inpTitle.value = '';
+        return false;
+    }
+    if (isEmpty(inpDescription)) {
+        error('please enter a non empty text description\n', incorrectInput);
+        inpDescription.value = '';
+        return false;
+    }
+    return true;
+}
 //-----------------------------------------------
-function check(inp){
-    return inp.value.match(/^[0-9a-zA-Z\s]+$/)
- //   return inp.value.match(/[a-z]/i) || !isNaN(inp.value);
+function isLetterOrNumber(inp){
+    return inp.value.match(/^[0-9a-zA-Z\s]+$/);
 }
 //-------------------------------------
 function isEmpty(inp){
-    return (inp.value.length == 0)
+    return (inp.value.trim().length === 0);
 }
 //----------------------------------------
 function error(str, incorrectInp){
@@ -68,77 +72,91 @@ function error(str, incorrectInp){
     incorrectInp.setAttribute("class", "alert alert-danger");
 }
 //------------------------------------
+function displayForm(){
+    toDoList.forEach(element => {
+        getById("myDiv").appendChild(element);
+    });
+}
 //---------------------------
 function createCard(inpTitle, inpDescription, checkBox){
 
-    let myDiv = document.createElement('div');
+    let myDiv = createNode('div')
 
-    let card = document.createElement('div');
-    (checkBox.checked) ? card.setAttribute("class", "card w-100  border border-5 rounded-3 alert alert-danger")
-        :  card.className = "card w-100  border border-5 rounded-3";
-    myDiv.appendChild(card);
+    let card = createNode('div');
+    (checkBox.checked) ?  appendNode(myDiv, card, 'card w-100  border border-5 rounded-3 alert alert-danger')
+                       :  appendNode(myDiv, card, 'card w-100  border border-5 rounded-3');
 
-    let cardBody = document.createElement('div');
-    cardBody.className = "card-body";
-    card.appendChild(cardBody);
+    let cardBody = createNode('div');
+    appendNode(card, cardBody, "card-body");
 
-    let title = document.createElement('h5');
-    title.innerText = inpTitle;
-    title.className = 'card-title';
-    cardBody.appendChild(title);
+    let titleCard = createNode('h5');
+    titleCard.innerText = inpTitle;
+    titleCard.id = 't';
+    appendNode(cardBody, titleCard, 'card-title')
 
-    let description = document.createElement('p');
-    description.innerHTML = inpDescription;
-    description.className = "card-text";
-    cardBody.appendChild(description );
+    let descriptionCard = createNode('p');
+    descriptionCard.innerHTML = inpDescription;
+    appendNode(cardBody, descriptionCard, 'card-text')
 
-    let btnDelete = document.createElement('button');
+    let btnDelete = createNode('button');
     btnDelete.innerHTML = "Delete";
-    btnDelete.setAttribute("class","btn btn-danger");
-    cardBody.appendChild(btnDelete);
+    appendNode(cardBody, btnDelete, "btn btn-danger")
 
-    //document.getElementById("myDiv").appendChild(myDiv);
-    return  new Form(myDiv);
+/*    var c = document.getElementById('myDiv').childNodes;
+    var txt = "";
+    var i;
+    for (i = 0; i < c.length; i++) {
+        txt = txt + c[i].nodeName + "<br>";
+    }
+
+
+    document.getElementById('demo').innerHTML = txt;*/
+
+    return  myDiv;
+}
+//---------------------------------
+function appendNode(parent, child, nameClass) {
+    child.className = nameClass;
+    parent.appendChild(child);
+}
+//-----------------------------------
+function getById(container) {
+    return document.getElementById(container);
+}
+//------------------------------------
+function createNode(node) {
+    return document.createElement(node);
 }
 //--------------------------------
-function deleteBtnClicked(){
-
-}
+/*function deleteBtnClicked(){
+}*/
 //-------------------------------
-function sort(){
-   // toDoList.forEach(element.title => );
-
-    let x = document.getElementById("myDiv");
-
-  /*  toDoList.sort(function (a, b) {
-        return a.localeCompare(b);
-    });*/
-
-/*    let result = [];
-    for (let i = 0; i < toDoList.length; i++) {
-        if (toDoList[i].title === false) {
-            result.push(toDoList[i]);
-        }
+function compare( a, b ) {
+    if ( a.title.value < b.title.value ){
+        return -1;
     }
-    for (let i = 0; i < toDoList.length; i++) {
-        if (!toDoList[i].title === false) {
-            result.push(toDoList[i]);
-        }
+    if ( a.title.value > b.title.value ){
+        return 1;
     }
-
-    x.innerHTML = result;*/
-
-  //  toDoList.sort((firstItem.title.value, secondItem.title.value) => firstItem.title.value - secondItem.grade.title.value);
+    return 0;
 }
+//-----------
+function sort() {
+    // toDoList.forEach(element.title => );
 
+    toDoList.sort(compare);
+
+    displayForm();
+}
 //--------------------------
+/*
 function press(event) {
     if (event.keyCode == 13 && !event.shiftKey) {
-
-        document.getElementById("myDiv").innerHTML += "<br>";
+        getById("myDiv").innerHTML += "<br>";
     }
 }
 
+*/
 
 
 
