@@ -4,20 +4,26 @@ class Form
 {
     constructor(myDiv) {
         this.myDiv = myDiv;
-        toDoList.push(this.myDiv);
+        return this.myDiv;
     }
-
 }
 //---------------------------------------------------
 toDoList = []
 
 //-------------------------------------------------------
-window.addEventListener('DOMContentLoaded', (event) => {
+window.addEventListener('DOMContentLoaded', () => {
 
     getById("addBtn").addEventListener("click", addButtonClicked);
     getById("sortBtn").addEventListener('click',sort);
     getById('showHighPriority').addEventListener('click', showHighPriority);
     getById('backBtn').addEventListener('click', backButton);
+
+    window.addEventListener("keydown", function(event) {
+        if (event.code === 'Space') {
+            event.preventDefault();
+            addButtonClicked();
+        }
+    }, true);
 });
 //-------------------------------
 function addButtonClicked() {
@@ -31,11 +37,12 @@ function addButtonClicked() {
         return;
 
     // if got here ==> correct inputs
-     new Form(createCard(inpTitle.value, inpDescription.value, checkBox));
+     toDoList.push(new Form(createCard(inpTitle.value, inpDescription.value, checkBox)))
 
      toDoList.forEach( elem => {
          elem.getElementsByClassName('btn btn-danger')[0].addEventListener('click', function (){
-             elem.remove();
+             getById('myDiv').removeChild(getById('myDiv').childNodes[toDoList.indexOf(elem)]);
+             toDoList.splice(toDoList.indexOf(elem),  1);
          });
      });
 
@@ -74,7 +81,7 @@ function error(str, incorrectInp){
 //------------------------------------
 function displayForm(){
     toDoList.forEach(element => {
-        getById("myDiv").appendChild(element).appendChild(createNode('p'));
+        getById("myDiv").appendChild(element);
     });
 }
 //---------------------------
@@ -84,8 +91,8 @@ function createCard(inpTitle, inpDescription, checkBox){
     checkBox.checked ? myDiv.contentEditable = 'true' : myDiv.contentEditable = 'false';
 
     let card = createNode('div');
-    checkBox.checked ? appendNode(myDiv, card, 'card w-100  border border-5 rounded-3 alert alert-warning', '')
-                     : appendNode(myDiv, card, 'card w-100  border border-5 rounded-3', '');
+    checkBox.checked ? appendNode(myDiv, card, 'card w-100  border border-5 rounded-3 alert alert-warning mb-2', '')
+                     : appendNode(myDiv, card, 'card w-100  border border-5 rounded-3 mb-2', '');
 
     let cardBody = createNode('div');
     appendNode(card, cardBody, "card-body", '');
@@ -127,36 +134,19 @@ function sort() {
 }
 //--------------------------
 function showHighPriority() {
-
-    getById('addBtn').setAttribute("class", "d-none");
-    getById('myDiv').setAttribute("class", "d-none");
-    getById("form").setAttribute("class", "d-none");
-    getById('divBtn').setAttribute('class', 'd-none');
-    getById('incorrectInput').setAttribute('class', 'd-none');
-
-    getById('divBtnBack').setAttribute('class', 'text-center d-block');
-
-    let div = getById('divHighPriority');
-    div.setAttribute('class', 'd-block');
+    getById('mainDiv').setAttribute('class', 'd-none');
+    getById('divShowHigh').setAttribute('class', 'd-block');
 
     toDoList.forEach( elem => {
         if (elem.getAttribute('contentEditable') === 'true'){
-            div.appendChild(elem);
+            getById('divHighPriority').appendChild(elem);
         }
     });
 }
 //----------------------------
 function backButton() {
-
-    getById('addBtn').setAttribute("class", "d-block btn btn-outline-secondary");
-    getById('myDiv').setAttribute("class", "d-block");
-    getById("form").setAttribute("class", "d-block");
-    getById('divBtn').setAttribute('class', 'd-block text-center');
-
-    correctInput(getById('titleID'), getById('descriptionID'), getById('incorrectInput'));
-
-    getById('divHighPriority').setAttribute("class", "d-none");
-    getById('divBtnBack').setAttribute("class", "d-none text-center");
+    getById('mainDiv').setAttribute('class', 'd-block');
+    getById('divShowHigh').setAttribute('class', 'd-none');
 
     displayForm();
 }

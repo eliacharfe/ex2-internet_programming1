@@ -40,49 +40,48 @@
 
         <div class="col-lg-8 col-md-10"><p></p>
 
-            <div class="text-center" id="divBtn">
-                <button type="button" class="btn btn-outline-secondary" id="showHighPriority">Show High Priority</button>
-                <button type="button" class="btn btn-outline-secondary" id="sortBtn">Sort</button>
+            <div id="divShowHigh" class="d-none">
+                <div class="text-center" id="divBtnBack">
+                    <button type="button" class="btn btn-outline-secondary" id="backBtn">Back</button>
+                    <p></p>
+                </div>
 
+                <div id="divHighPriority"></div>
             </div>
 
-            <div class="text-center d-none" id="divBtnBack">
-                <button type="button" class="btn btn-outline-secondary" id="backBtn">Back</button>
-                <p></p>
+            <div id="mainDiv">
+
+                <div class="text-center" id="divBtn">
+                    <button type="button" class="btn btn-outline-secondary" id="showHighPriority">Show High Priority</button>
+                    <button type="button" class="btn btn-outline-secondary" id="sortBtn">Sort</button>
+                </div>
+
+                <form id="form" method="post" autocomplete="on">
+                    <div class="form-group mb-2">
+                        <label for="titleID">Title</label>
+                        <input type="text" class="form-control" id="titleID" placeholder="type your to-do here" autocomplete="on">
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="descriptionID">Description</label>
+                        <textarea class="form-control" id="descriptionID" placeholder="type your to-do here"
+                                  style="height: 80px"></textarea>
+                    </div>
+                    <div class="checkbox mb-2">
+                        <label><input type="checkbox" name="checkbox" id="checkbox"> High Priority</label>
+                    </div>
+                </form>
+
+                <button type="button" class="btn btn-outline-secondary mb-3" id="addBtn">add</button>
+
+
+                <p id="incorrectInput"></p>
+
+                <div id="myDiv"></div>
+
+                <p id="demo"></p><!---------------->
+
+                <p><br></p>
             </div>
-
-            <div class="d-none" id="divHighPriority"></div>
-
-            <form id="form" method="post" autocomplete="on">
-                <div class="form-group">
-                    <label for="titleID">Title</label>
-                    <input type="text" class="form-control" id="titleID" placeholder="type your to-do here">
-                </div>
-                <p></p>
-                <div class="form-group">
-                    <label for="descriptionID">Description</label>
-                    <textarea class="form-control" id="descriptionID"
-                              placeholder="type your to-do here" style="height: 80px"></textarea>
-                </div>
-                <p></p>
-                <div class="checkbox">
-                    <label><input type="checkbox" name="checkbox" id="checkbox"> High Priority</label>
-                </div>
-                <p></p>
-            </form>
-
-            <button type="button" class="btn btn-outline-secondary" id="addBtn">add</button>
-            <p></p>
-
-            <p id="incorrectInput"></p>
-             <p></p>
-
-            <div id="myDiv"></div>
-
-            <p id="demo"></p>
-            <!--class="container-fluid"-->
-
-            <p><br><br>
         </div>
 
         <div class="col-lg-2 col-md-1" style="background-color: cadetblue"></div>
