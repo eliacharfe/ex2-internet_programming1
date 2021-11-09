@@ -9,7 +9,6 @@
     <script src="js/myfunctions.js"></script>
 
     <title>Exercise 2 - Internet Programming Course template 2</title>
-
 </head>
 <body>
 
@@ -29,9 +28,8 @@
                     <footer class="footer h5 d-none d-md-block">Internet programming course - my solution</footer>
                 </blockquote>
             </nav>
-
-
         </div>
+
         <div class="col-lg-2 col-md-1" style="background-color: darkcyan"></div>
     </div>
 
@@ -47,19 +45,22 @@
                 </div>
 
                 <div id="divHighPriority"></div>
+                <p id="demo2"></p>
             </div>
 
             <div id="mainDiv">
 
                 <div class="text-center" id="divBtn">
-                    <button type="button" class="btn btn-outline-secondary" id="showHighPriority">Show High Priority</button>
+                    <button type="button" class="btn btn-outline-secondary" id="showHighPriority">Show High Priority
+                    </button>
                     <button type="button" class="btn btn-outline-secondary" id="sortBtn">Sort</button>
                 </div>
 
                 <form id="form" method="post" autocomplete="on">
                     <div class="form-group mb-2">
-                        <label for="titleID">Title</label>
-                        <input type="text" class="form-control" id="titleID" placeholder="type your to-do here" autocomplete="on">
+                        <label for="titleID" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="titleID" placeholder="type your to-do here"
+                                  autocomplete="on" required>
                     </div>
                     <div class="form-group mb-2">
                         <label for="descriptionID">Description</label>
@@ -70,10 +71,10 @@
                         <label><input type="checkbox" name="checkbox" id="checkbox"> High Priority</label>
                     </div>
 
-                   <!-- <button type="button" class="btn btn-outline-secondary mb-3" id="addBtn">add</button>-->
+                    <!-- <button type="button" class="btn btn-outline-secondary mb-3" id="addBtn">add</button>-->
                 </form>
 
-                <button type="button" class="btn btn-outline-secondary mb-3" id="addBtn">add</button>
+                <button type="button" class="btn btn-outline-primary mb-3" id="addBtn">add</button>
 
 
                 <p id="incorrectInput"></p>
@@ -82,7 +83,7 @@
 
                 <p id="demo"></p><!---------------->
 
-                <p><br></p>
+                <p></p>
             </div>
         </div>
 
