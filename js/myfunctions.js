@@ -5,14 +5,24 @@ if (typeof document !== "undefined") {
         mainModul.getById("sortBtn").addEventListener('click', buttonsModul.sort);//sort toDoList
         mainModul.getById('showHighPriority').addEventListener('click', buttonsModul.showHighPriority);// show high priority
         mainModul.getById('backBtn').addEventListener('click', buttonsModul.backButton);
-        document.addEventListener("keydown", function (event) {
-            if (event.code === 'Space') {  // submit when press on space
+
+        mainModul.getById('titleID').addEventListener('keydown', function (event){
+            if (event.code === 'Enter' || event.code === 'Space') {
                 event.preventDefault();
                 mainModul.addButtonClicked();
             }
-            /*if(event.code === 'Enter')
-                event.preventDefault();*/
-        }, true);
+        });
+
+        mainModul.getById('descriptionID').addEventListener('keyup', function (event){
+            if (event.code === 'Enter') { // add new line to the string of the text area when enter pressed
+               this.value += '<br/>';
+                //mainModul.getById('descriptionID').value = mainModul.getById('descriptionID').value + "<br/>";
+            }
+            if (event.code === 'Space'){
+                event.preventDefault();
+                mainModul.addButtonClicked();
+            }
+        });
     });
 }
 //-------------------------------------------------
@@ -35,7 +45,7 @@ const mainModul = (() => {
             this.priority ? myDiv.contentEditable = 'true' : myDiv.contentEditable = 'false';
 
             let card = createNode('div');
-            this.priority ? appendNode(myDiv, card, 'card w-100  border border-5 rounded-3 alert alert-warning mb-2', '')
+            this.priority ? appendNode(myDiv, card, 'card w-100  border border-5 rounded-3 alert-warning mb-2', '')
                 : appendNode(myDiv, card, 'card w-100  border border-5 rounded-3 mb-2', '');
 
             let cardBody = createNode('div');
@@ -55,11 +65,11 @@ const mainModul = (() => {
     }
 
     //-----------------------------
-    const createNode = function (node) {
+    const createNode = function (node) {// generic func
         return document.createElement(node);
     }
     //---------------------------------------
-    const appendNode = function (parent, child, nameClass, text) {
+    const appendNode = function (parent, child, nameClass, text) { // generic func
         child.className = nameClass;
         child.innerHTML = text;
         parent.appendChild(child);
@@ -97,7 +107,7 @@ const mainModul = (() => {
         buttonsModul.buttonsDeleteHandle("myDiv"); // buttons handle
     }
     //--------------------------------------
-    publicData.getById = function (container) {
+    publicData.getById = function (container) {// generic func
         return document.getElementById(container);
     }
     //-------------------------------------
