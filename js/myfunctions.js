@@ -1,16 +1,20 @@
-window.addEventListener('DOMContentLoaded', () => {
+if (typeof document !== "undefined") {
+    document.addEventListener('DOMContentLoaded', () => { // listen and wait for DOM
 
-    mainModul.getById("addBtn").addEventListener("click", mainModul.addButtonClicked); // submit when click
-    mainModul.getById("sortBtn").addEventListener('click', buttonsModul.sort);//sort toDoList
-    mainModul.getById('showHighPriority').addEventListener('click', buttonsModul.showHighPriority);// show high priority
-    mainModul.getById('backBtn').addEventListener('click', buttonsModul.backButton);
-    window.addEventListener("keydown", function (event) {
-        if (event.code === 'Space') {  // submit when press on space
-            event.preventDefault();
-            mainModul.addButtonClicked();
-        }
-    }, true);
-});
+        mainModul.getById("addBtn").addEventListener("click", mainModul.addButtonClicked); // submit when click
+        mainModul.getById("sortBtn").addEventListener('click', buttonsModul.sort);//sort toDoList
+        mainModul.getById('showHighPriority').addEventListener('click', buttonsModul.showHighPriority);// show high priority
+        mainModul.getById('backBtn').addEventListener('click', buttonsModul.backButton);
+        document.addEventListener("keydown", function (event) {
+            if (event.code === 'Space') {  // submit when press on space
+                event.preventDefault();
+                mainModul.addButtonClicked();
+            }
+            /*if(event.code === 'Enter')
+                event.preventDefault();*/
+        }, true);
+    });
+}
 //-------------------------------------------------
 //---------------------------------------------------
 const mainModul = (() => {
@@ -18,15 +22,15 @@ const mainModul = (() => {
     let toDoList = []
     let publicData = {}
 
-    class Form {
-        constructor(title, description, priority, button) {
+    class Task {
+        constructor(title, description, priority) {
             this.title = title;
             this.description = description;
             this.priority = priority;
-            this.button = button;
         }
 
         createDiv() {
+            // create new card div with title, description and button, then return the div
             let myDiv = createNode('div');
             this.priority ? myDiv.contentEditable = 'true' : myDiv.contentEditable = 'false';
 
@@ -43,7 +47,8 @@ const mainModul = (() => {
             let descriptionCard = createNode('p');
             appendNode(cardBody, descriptionCard, 'card-text', this.description);
 
-            appendNode(cardBody, this.button, 'btn btn-danger', "Delete");
+            let btnDelete = createNode('button');
+            appendNode(cardBody, btnDelete, 'btn btn-danger', "Delete");
 
             return myDiv;
         }
@@ -53,16 +58,15 @@ const mainModul = (() => {
     const createNode = function (node) {
         return document.createElement(node);
     }
-
     //---------------------------------------
     const appendNode = function (parent, child, nameClass, text) {
         child.className = nameClass;
         child.innerHTML = text;
         parent.appendChild(child);
     }
-
     //--------------------------------------------------------------------
     publicData.addButtonClicked = function () {
+        //when the add button is clicked (or clicked Space)
         let inpTitle = mainModul.getById("titleID");
         let inpDescription = mainModul.getById("descriptionID");
         let checkBox = mainModul.getById("checkbox");
@@ -73,40 +77,24 @@ const mainModul = (() => {
             return;
 
         // if got here ==> correct inputs
-        inpTitle.setAttribute('class', 'form-control');
+        inpTitle.setAttribute('class', 'form-control'); // in case was invalid because had bad input before
         inpDescription.setAttribute('class', 'form-control');
 
-        let btnDelete = createNode('button');
-        btnDelete.className = 'btn btn-danger';
-        btnDelete.innerHTML = "Delete";
-
-        toDoList.push(new Form(inpTitle.value, inpDescription.value, checkBox.checked, btnDelete));
-
-        toDoList.forEach(elem => { // checking buttons and delete each task that its delete button pressed
-            elem.button.addEventListener('click', function () {
-                mainModul.getById('myDiv').removeChild(mainModul.getById('myDiv').childNodes[toDoList.indexOf(elem)]);
-
-                for (let title of mainModul.getById('divHighPriority').getElementsByTagName('h5')) {
-                    if (title.innerHTML === elem.title) {
-                        title.parentElement.parentElement.parentElement.remove();
-                    }
-                }
-                toDoList.splice(toDoList.indexOf(elem), 1);
-            });
-        });
-
-        mainModul.displayForm();
+        toDoList.push(new Task(inpTitle.value, inpDescription.value, checkBox.checked));
+        mainModul.displayList();
 
         incorrectInput.setAttribute("class", "d-none");
         inpTitle.value = inpDescription.value = '';
     }
 
     //------------------------------------------------------------
-    publicData.displayForm = function () {
-        mainModul.getById("myDiv").innerHTML = '';
-        toDoList.forEach(element => {
-            mainModul.getById("myDiv").appendChild(element.createDiv());
+    publicData.displayList = function () { // display list of tasks to the DOM
+        mainModul.getById("myDiv").innerHTML = '';// clear div
+        toDoList.forEach(task => {
+            mainModul.getById("myDiv").appendChild(task.createDiv()); // inset tasks to div dom
         });
+
+        buttonsModul.buttonsDeleteHandle("myDiv"); // buttons handle
     }
     //--------------------------------------
     publicData.getById = function (container) {
@@ -125,21 +113,22 @@ const validationModul = (() => {
     let publicData = {}
 
     publicData.correctInput = function (inpTitle, inpDescription, incorrectInput) {
+        // check inputs and return true if all is correct inputs, else will show user what problem he have and return false
         if (isEmpty(inpTitle) || !isLetterOrNumber(inpTitle)) {
             error('please enter a non empty title with letters and digits only\n', incorrectInput);
             inpTitle.value = '';
-            mainModul.getById('titleID').setAttribute('class', 'form-control is-invalid');
+            inpTitle.setAttribute('class', 'form-control is-invalid');
             return false;
         }
         if (isAlreadyExistTitle(inpTitle.value)) {
             error('this task name is already exist. Choose another name for the task\n', incorrectInput);
-            mainModul.getById('titleID').setAttribute('class', 'form-control is-invalid');
+            inpTitle.setAttribute('class', 'form-control is-invalid');
             inpTitle.value = '';
             return false;
         }
         if (isEmpty(inpDescription)) {
             error('please enter a non empty text description\n', incorrectInput);
-            mainModul.getById('descriptionID').setAttribute('class', 'form-control is-invalid');
+            inpDescription.setAttribute('class', 'form-control is-invalid');
             inpDescription.value = '';
             return false;
         }
@@ -172,31 +161,52 @@ const validationModul = (() => {
 const buttonsModul = (() => {
     let publicData = {}
 
-    publicData.sort = function () {
+    publicData.sort = function () { // sort the array of tasks by title
         mainModul.myList().sort((a, b) => {
             if (a.title < b.title) return -1;
             if (a.title > b.title) return 1;
             return 0;
         });
 
-        mainModul.displayForm();
+        mainModul.displayList();
     }
-//--------------------------
+    //--------------------------
     publicData.showHighPriority = function () {
-        mainModul.getById('mainDiv').setAttribute('class', 'd-none');
-        mainModul.getById('divShowHigh').setAttribute('class', 'd-block');
+        // show high priority list
+        mainModul.getById('mainDiv').style.display = "none";
+        mainModul.getById('divShowHigh').style.display = "block";
 
-        mainModul.getById("divHighPriority").innerHTML = ''
-        mainModul.myList().forEach(elem => {
-            if (elem.priority)
-                mainModul.getById('divHighPriority').appendChild(elem.createDiv());
+        mainModul.getById("divHighPriority").innerHTML = ''; // clear div
+        mainModul.myList().forEach(task => {
+            if (task.priority)
+                mainModul.getById('divHighPriority').appendChild(task.createDiv());
         });
+
+        buttonsModul.buttonsDeleteHandle("divHighPriority"); // buttons handle
     }
-//----------------------------
+    //----------------------------
     publicData.backButton = function () {
-        mainModul.getById('mainDiv').setAttribute('class', 'd-block');
-        mainModul.getById('divShowHigh').setAttribute('class', 'd-none');
-        mainModul.displayForm();
+        // when pressed on the back button
+        mainModul.getById('mainDiv').style.display = "block";
+        mainModul.getById('divShowHigh').style.display = "none";
+        mainModul.displayList();
+    }
+    //-------------------------------------------------------------
+    publicData.buttonsDeleteHandle = function (currDivOutput) {
+        // generic function that check if buttons pressed on div of the display window (regular / high priority mode
+        // and delete the task if pressed on its delete button
+        let buttons = mainModul.getById(currDivOutput).querySelectorAll('button');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                let title = btn.parentElement.getElementsByTagName('h5')[0].innerHTML;
+                btn.parentElement.parentElement.parentElement.remove();
+                mainModul.myList().forEach(task => {
+                    if (task.title === title)
+                        mainModul.myList().splice(mainModul.myList().indexOf(task), 1);
+                });
+            })
+        })
     }
 
     return publicData;
