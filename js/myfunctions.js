@@ -1,24 +1,23 @@
 if (typeof document !== "undefined") {
     document.addEventListener('DOMContentLoaded', () => { // listen and wait for DOM
-
         mainModul.getById("addBtn").addEventListener("click", mainModul.addButtonClicked); // submit when click
-        mainModul.getById("sortBtn").addEventListener('click', buttonsModul.sort);//sort toDoList
-        mainModul.getById('showHighPriority').addEventListener('click', buttonsModul.showHighPriority);// show high priority
-        mainModul.getById('backBtn').addEventListener('click', buttonsModul.backButton);
+        mainModul.getById("sortBtn").addEventListener('click', mainModul.buttonsModul.sort);//sort toDoList
+        mainModul.getById('showHighPriority').addEventListener('click', mainModul.buttonsModul.showHighPriority);// show high priority
+        mainModul.getById('backBtn').addEventListener('click', mainModul.buttonsModul.backButton);
 
-        mainModul.getById('titleID').addEventListener('keydown', function (event){
+        mainModul.getById('titleID').addEventListener('keydown', function (event) {
             if (event.code === 'Enter' || event.code === 'Space') {
                 event.preventDefault();
                 mainModul.addButtonClicked();
             }
         });
 
-        mainModul.getById('descriptionID').addEventListener('keyup', function (event){
+        mainModul.getById('descriptionID').addEventListener('keyup', function (event) {
             if (event.code === 'Enter') { // add new line to the string of the text area when enter pressed
-               this.value += '<br/>';
+                this.value += '<br/>';
                 //mainModul.getById('descriptionID').value = mainModul.getById('descriptionID').value + "<br/>";
             }
-            if (event.code === 'Space'){
+            if (event.code === 'Space') {
                 event.preventDefault();
                 mainModul.addButtonClicked();
             }
@@ -91,133 +90,132 @@ const mainModul = (() => {
         inpDescription.setAttribute('class', 'form-control');
 
         toDoList.push(new Task(inpTitle.value, inpDescription.value, checkBox.checked));
-        mainModul.displayList();
+        displayList();
 
         incorrectInput.setAttribute("class", "d-none");
         inpTitle.value = inpDescription.value = '';
     }
 
     //------------------------------------------------------------
-    publicData.displayList = function () { // display list of tasks to the DOM
+    const displayList = function () { // display list of tasks to the DOM
         mainModul.getById("myDiv").innerHTML = '';// clear div
         toDoList.forEach(task => {
             mainModul.getById("myDiv").appendChild(task.createDiv()); // inset tasks to div dom
         });
 
-        buttonsModul.buttonsDeleteHandle("myDiv"); // buttons handle
+        mainModul.buttonsModul.buttonsDeleteHandle("myDiv"); // buttons handle
     }
     //--------------------------------------
     publicData.getById = function (container) {// generic func
         return document.getElementById(container);
     }
-    //-------------------------------------
-    publicData.myList = function () {
-        return toDoList;
-    }
 
-    return publicData;
-})();
-//---------------------------------
-// modul validation
-const validationModul = (() => {
-    let publicData = {}
+    //---------------------------------
+    //---------------------------------
+    // modul validation  (inside mainModul)
+    const validationModul = (() => {
+        let publicDataValidation = {}
 
-    publicData.correctInput = function (inpTitle, inpDescription, incorrectInput) {
-        // check inputs and return true if all is correct inputs, else will show user what problem he have and return false
-        if (isEmpty(inpTitle) || !isLetterOrNumber(inpTitle)) {
-            error('please enter a non empty title with letters and digits only\n', incorrectInput);
-            inpTitle.value = '';
-            inpTitle.setAttribute('class', 'form-control is-invalid');
-            return false;
+        publicDataValidation.correctInput = function (inpTitle, inpDescription, incorrectInput) {
+            // check inputs and return true if all is correct inputs, else will show user what problem he have and return false
+            if (isEmpty(inpTitle) || !isLetterOrNumber(inpTitle)) {
+                error('please enter a non empty title with letters and digits only\n', incorrectInput);
+                inpTitle.value = '';
+                inpTitle.setAttribute('class', 'form-control is-invalid');
+                return false;
+            }
+            if (isAlreadyExistTitle(inpTitle.value)) {
+                error('this task name is already exist. Choose another name for the task\n', incorrectInput);
+                inpTitle.setAttribute('class', 'form-control is-invalid');
+                inpTitle.value = '';
+                return false;
+            }
+            if (isEmpty(inpDescription)) {
+                error('please enter a non empty text description\n', incorrectInput);
+                inpDescription.setAttribute('class', 'form-control is-invalid');
+                inpDescription.value = '';
+                return false;
+            }
+            return true; // correct input
         }
-        if (isAlreadyExistTitle(inpTitle.value)) {
-            error('this task name is already exist. Choose another name for the task\n', incorrectInput);
-            inpTitle.setAttribute('class', 'form-control is-invalid');
-            inpTitle.value = '';
-            return false;
+        //----------------------------------------------
+        const isAlreadyExistTitle = function (title) {
+            return toDoList.some(function (el) {
+                return el.title === title;
+            });
         }
-        if (isEmpty(inpDescription)) {
-            error('please enter a non empty text description\n', incorrectInput);
-            inpDescription.setAttribute('class', 'form-control is-invalid');
-            inpDescription.value = '';
-            return false;
+        //-----------------------------------------------
+        const isLetterOrNumber = function (inp) {
+            return inp.value.match(/^[0-9a-zA-Z\s]+$/);
         }
-        return true; // correct input
-    }
-    //----------------------------------------------
-    const isAlreadyExistTitle = function (title) {
-        return mainModul.myList().some(function (el) {
-            return el.title === title;
-        });
-    }
-    //-----------------------------------------------
-    const isLetterOrNumber = function (inp) {
-        return inp.value.match(/^[0-9a-zA-Z\s]+$/);
-    }
-    //-------------------------------------
-    const isEmpty = function (inp) {
-        return (inp.value.trim().length === 0);
-    }
-    //----------------------------------------
-    const error = function (str, incorrectInp) {
-        incorrectInp.innerHTML = str;
-        incorrectInp.setAttribute("class", "alert alert-danger");
-    }
+        //-------------------------------------
+        const isEmpty = function (inp) {
+            return (inp.value.trim().length === 0);
+        }
+        //----------------------------------------
+        const error = function (str, incorrectInp) {
+            incorrectInp.innerHTML = str;
+            incorrectInp.setAttribute("class", "alert alert-danger");
+        }
 
-    return publicData;
-})();
-//--------------------------------
-// buttons modul
-const buttonsModul = (() => {
-    let publicData = {}
+        return publicDataValidation ;
+    })();
+    //--------------------------------
+    //--------------------------------
+    // buttons modul (inside mainModul)
+    publicData.buttonsModul = (() => {
+        let publicDataButtons = {}
 
-    publicData.sort = function () { // sort the array of tasks by title
-        mainModul.myList().sort((a, b) => {
-            if (a.title < b.title) return -1;
-            if (a.title > b.title) return 1;
-            return 0;
-        });
+        publicDataButtons.sort = function () { // sort the array of tasks by title
+            toDoList.sort((a, b) => {
+                if (a.title < b.title) return -1;
+                if (a.title > b.title) return 1;
+                return 0;
+            });
 
-        mainModul.displayList();
-    }
-    //--------------------------
-    publicData.showHighPriority = function () {
-        // show high priority list
-        mainModul.getById('mainDiv').style.display = "none";
-        mainModul.getById('divShowHigh').style.display = "block";
+            displayList();
+        }
+        //--------------------------
+        publicDataButtons.showHighPriority = function () {
+            // show high priority list
+            mainModul.getById('mainDiv').style.display = "none";
+            mainModul.getById('divShowHigh').style.display = "block";
 
-        mainModul.getById("divHighPriority").innerHTML = ''; // clear div
-        mainModul.myList().forEach(task => {
-            if (task.priority)
-                mainModul.getById('divHighPriority').appendChild(task.createDiv());
-        });
+            mainModul.getById("divHighPriority").innerHTML = ''; // clear div
+            toDoList.forEach(task => {
+                if (task.priority)
+                    mainModul.getById('divHighPriority').appendChild(task.createDiv());
+            });
 
-        buttonsModul.buttonsDeleteHandle("divHighPriority"); // buttons handle
-    }
-    //----------------------------
-    publicData.backButton = function () {
-        // when pressed on the back button
-        mainModul.getById('mainDiv').style.display = "block";
-        mainModul.getById('divShowHigh').style.display = "none";
-        mainModul.displayList();
-    }
-    //-------------------------------------------------------------
-    publicData.buttonsDeleteHandle = function (currDivOutput) {
-        // generic function that check if buttons pressed on div of the display window (regular / high priority mode
-        // and delete the task if pressed on its delete button
-        let buttons = mainModul.getById(currDivOutput).querySelectorAll('button');
+            mainModul.buttonsModul.buttonsDeleteHandle("divHighPriority"); // buttons handle
+        }
+        //----------------------------
+        publicDataButtons.backButton = function () {
+            // when pressed on the back button
+            mainModul.getById('mainDiv').style.display = "block";
+            mainModul.getById('divShowHigh').style.display = "none";
+            displayList();
+        }
+        //-------------------------------------------------------------
+        publicDataButtons.buttonsDeleteHandle = function (currDivOutput) {
+            // generic function that check if buttons pressed on div of the curr display window (regular / high priority mode
+            // and delete the task if pressed on its delete button
+            let buttons = mainModul.getById(currDivOutput).querySelectorAll('button');
 
-        buttons.forEach(btn => {
-            btn.addEventListener('click', function () {
-                let title = btn.parentElement.getElementsByTagName('h5')[0].innerHTML;
-                btn.parentElement.parentElement.parentElement.remove();
-                mainModul.myList().forEach(task => {
-                    if (task.title === title)
-                        mainModul.myList().splice(mainModul.myList().indexOf(task), 1);
-                });
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    let title = btn.parentElement.getElementsByTagName('h5')[0].innerHTML;
+                    btn.parentElement.parentElement.parentElement.remove();
+                    toDoList.forEach(task => {
+                        if (task.title === title)
+                            toDoList.splice(toDoList.indexOf(task), 1);
+                    });
+                })
             })
-        })
-    }
+        }
+
+        return publicDataButtons;
+    })();
 
     return publicData;
 })();
