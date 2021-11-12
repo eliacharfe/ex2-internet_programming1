@@ -11,17 +11,6 @@ if (typeof document !== "undefined") {
                 mainModul.addButtonClicked();
             }
         });
-
-        mainModul.getById('descriptionID').addEventListener('keyup', function (event) {
-            if (event.code === 'Enter') { // add new line to the string of the text area when enter pressed
-                this.value += '<br/>';
-                //mainModul.getById('descriptionID').value = mainModul.getById('descriptionID').value + "<br/>";
-            }
-            if (event.code === 'Space') {
-                event.preventDefault();
-                mainModul.addButtonClicked();
-            }
-        });
     });
 }
 //-------------------------------------------------
@@ -34,7 +23,7 @@ const mainModul = (() => {
     class Task {
         constructor(title, description, priority) {
             this.title = title;
-            this.description = description;
+            this.description = description.replace(/\n\r?/g, "<br />");
             this.priority = priority;
         }
 
@@ -119,19 +108,19 @@ const mainModul = (() => {
         publicDataValidation.correctInput = function (inpTitle, inpDescription, incorrectInput) {
             // check inputs and return true if all is correct inputs, else will show user what problem he have and return false
             if (isEmpty(inpTitle) || !isLetterOrNumber(inpTitle)) {
-                error('please enter a non empty title with letters and digits only\n', incorrectInput);
+                error('Please enter a non empty title with letters and digits only\n', incorrectInput);
                 inpTitle.value = '';
                 inpTitle.setAttribute('class', 'form-control is-invalid');
                 return false;
             }
             if (isAlreadyExistTitle(inpTitle.value)) {
-                error('this task name is already exist. Choose another name for the task\n', incorrectInput);
+                error('This task name already exist. Choose another name for the task\n', incorrectInput);
                 inpTitle.setAttribute('class', 'form-control is-invalid');
                 inpTitle.value = '';
                 return false;
             }
             if (isEmpty(inpDescription)) {
-                error('please enter a non empty text description\n', incorrectInput);
+                error('Please enter a non empty text description\n', incorrectInput);
                 inpDescription.setAttribute('class', 'form-control is-invalid');
                 inpDescription.value = '';
                 return false;
