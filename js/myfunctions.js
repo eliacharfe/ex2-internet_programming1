@@ -6,9 +6,11 @@ if (typeof document !== "undefined") {
         mainModul.getById('backBtn').addEventListener('click', mainModul.buttonsModul.backButton);
 
         mainModul.getById('titleID').addEventListener('keydown', function (event) {
-            if (event.code === 'Enter' || event.code === 'Space') {
+            if (event.code === 'Enter') { // when press enter go to the next input in form (from title to the description)
                 event.preventDefault();
-                mainModul.addButtonClicked();
+                let form = event.target.form;
+                let index = Array.prototype.indexOf.call(form, event.target);
+                form.elements[index + 1].focus();
             }
         });
     });
@@ -23,7 +25,7 @@ const mainModul = (() => {
     class Task {
         constructor(title, description, priority) {
             this.title = title;
-            this.description = description.replace(/\n\r?/g, "<br />");
+            this.description = description.replace(/\n\r?/g, "<br />"); // when pressed Enter key will insert new line to the string of the description text
             this.priority = priority;
         }
 
@@ -99,8 +101,8 @@ const mainModul = (() => {
         return document.getElementById(container);
     }
 
-    //---------------------------------
-    //---------------------------------
+      //---------------------------------
+     //---------------------------------
     // modul validation  (inside mainModul)
     const validationModul = (() => {
         let publicDataValidation = {}
@@ -147,10 +149,10 @@ const mainModul = (() => {
             incorrectInp.setAttribute("class", "alert alert-danger");
         }
 
-        return publicDataValidation ;
+        return publicDataValidation;
     })();
-    //--------------------------------
-    //--------------------------------
+      //--------------------------------
+     //--------------------------------
     // buttons modul (inside mainModul)
     publicData.buttonsModul = (() => {
         let publicDataButtons = {}
